@@ -1,0 +1,10 @@
+image: docker:19.03.1
+
+
+before_script:
+  - docker info
+
+build:
+  stage: build
+  script:
+    - docker build -t cyb3rjake3 .
