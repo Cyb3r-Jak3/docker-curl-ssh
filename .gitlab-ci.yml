@@ -1,4 +1,5 @@
 build:
+  image: docker:19.03.0-dind
   services:
     - name: docker:dind
       entrypoint: ["env", "-u", "DOCKER_HOST"]
