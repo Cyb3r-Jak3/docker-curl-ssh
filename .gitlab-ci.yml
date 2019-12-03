@@ -1,4 +1,4 @@
-build:
+.docker_build:
   image: docker:19.03.0-dind
   services:
     - name: docker:dind
@@ -10,9 +10,22 @@ build:
     # See https://github.com/docker-library/docker/pull/166
     DOCKER_TLS_CERTDIR: ""
   stage: build
+  script:
+    - docker build -t $USER/curl-ssh .
+    - docker push $USER/curl-ssh
+
+Docker:
+  extends: .docker_build
+  variables:
+    USER: cyb3rjak3
   before_script:
   - docker info
-  - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN
-  script:
-    - docker build -t cyb3rjak3/curl-ssh .
-    - docker push cyb3rjak3/curl-ssh
+  - docker login -u $USER -p $DOCKER_TOKEN
+
+GitLab:
+  extends: .docker_build
+  variables:
+    USER: cyb3r-jak3
+  before_script:
+  - docker info
+  - docker login -u $USER -p GITLAB_TOKEN registry.gitlab.com
