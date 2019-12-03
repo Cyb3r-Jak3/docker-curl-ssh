@@ -11,8 +11,8 @@
     DOCKER_TLS_CERTDIR: ""
   stage: build
   script:
-    - docker build -t $USER/curl-ssh .
-    - docker push $USER/curl-ssh
+    - docker build -t $USER/docker-curl-ssh .
+    - docker push $USER/docker-curl-ssh
 
 Docker:
   extends: .docker_build
@@ -25,7 +25,7 @@ Docker:
 GitLab:
   extends: .docker_build
   variables:
-    USER: cyb3r-jak3
+    USER: registry.gitlab.com/cyb3r-jak3/docker-ssh-curl
   before_script:
   - docker info
   - docker login -u $USER -p $GITLAB_TOKEN registry.gitlab.com
