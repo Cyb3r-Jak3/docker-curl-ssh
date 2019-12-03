@@ -12,5 +12,7 @@ build:
   stage: build
   before_script:
   - docker info
+  - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN
   script:
-    - docker build -t cyb3rjake3 .
+    - docker build -t cyb3rjake3/curl-ssh .
+    - docker push cyb3rjak3/curl-ssh:latest
