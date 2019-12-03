@@ -28,4 +28,4 @@ GitLab:
     USER: cyb3r-jak3
   before_script:
   - docker info
-  - docker login -u $USER -p GITLAB_TOKEN registry.gitlab.com
+  - docker login -u $USER -p $GITLAB_TOKEN registry.gitlab.com
