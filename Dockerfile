@@ -4,4 +4,9 @@ RUN apk update \
   openssh-client \
   ca-certificates \
   bash \
-  curl
+  curl \
+  && mkdir -p ~/.ssh \
+  && touch ~/.ssh/known_hosts \
+  && chmod 700 ~/.ssh \
+  && chmod 644 ~/.ssh/known_hosts \
+  && eval $(ssh-agent -s)

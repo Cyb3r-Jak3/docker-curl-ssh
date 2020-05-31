@@ -2,8 +2,8 @@ stages:
   - build
   - test
 
-include:
-  - template: Container-Scanning.gitlab-ci.yml
+# include:
+#   - template: Container-Scanning.gitlab-ci.yml
 
 
 .docker_build:
@@ -27,7 +27,6 @@ Docker:
   variables:
     USER: cyb3rjak3
   before_script:
-  - docker info
   - docker login -u $USER -p $DOCKER_TOKEN
 
 GitLab:
@@ -35,5 +34,4 @@ GitLab:
   variables:
     USER: registry.gitlab.com/cyb3r-jak3/docker-ssh-curl
   before_script:
-  - docker info
   - docker login -u $USER -p $GITLAB_TOKEN registry.gitlab.com
