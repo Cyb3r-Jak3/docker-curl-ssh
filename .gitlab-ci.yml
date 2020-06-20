@@ -2,8 +2,9 @@ stages:
   - build
   - test
 
-# include:
-#   - template: Container-Scanning.gitlab-ci.yml
+include:
+  - template: Container-Scanning.gitlab-ci.yml
+  - template: Secret-Detection.gitlab-ci.yml
 
 
 .docker_build:
@@ -27,11 +28,21 @@ Docker:
   variables:
     USER: cyb3rjak3
   before_script:
-  - docker login -u $USER -p $DOCKER_TOKEN
+  - echo $DOCKER_TOKEN | docker login -u $USER --password-stdin
 
 GitLab:
   extends: .docker_build
   variables:
     USER: registry.gitlab.com/cyb3r-jak3/docker-ssh-curl
   before_script:
-  - docker login -u $USER -p $GITLAB_TOKEN registry.gitlab.com
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+
+GitLab-Scanning:
+  extends: .docker_build
+  variables:
+    IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $IMAGE .
+    - docker push $IMAGE
