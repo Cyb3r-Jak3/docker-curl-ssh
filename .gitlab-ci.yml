@@ -2,21 +2,14 @@ stages:
   - build
   - test
 
-# include:
-#   - template: Container-Scanning.gitlab-ci.yml
+include:
+  - template: Container-Scanning.gitlab-ci.yml
 
 
 .docker_build:
-  image: docker:19.03.0-dind
+  image: docker:19.03.12
   services:
-    - name: docker:dind
-      entrypoint: ["env", "-u", "DOCKER_HOST"]
-      command: ["dockerd-entrypoint.sh"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_DRIVER: overlay2
-    # See https://github.com/docker-library/docker/pull/166
-    DOCKER_TLS_CERTDIR: ""
+      - docker:19.03.12-dind
   stage: build
   script:
     - docker build -t $USER/docker-curl-ssh .
@@ -35,3 +28,13 @@ GitLab:
     USER: registry.gitlab.com/cyb3r-jak3/docker-ssh-curl
   before_script:
   - docker login -u $USER -p $GITLAB_TOKEN registry.gitlab.com
+
+GitLab-Scanning:
+    extends: .docker_build
+    variables:
+        IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+    before_script:
+        - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    script:
+        - docker build --tag $IMAGE --tag latest --cache-from registry.gitlab.com/cyb3r-jak3/docker-ssh-curl:latest .
+        - docker push $IMAGE
